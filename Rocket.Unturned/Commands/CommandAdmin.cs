@@ -8,41 +8,17 @@ namespace Rocket.Unturned.Commands
 {
     public class CommandAdmin : IRocketCommand
     {
-        public AllowedCaller AllowedCaller
-        {
-            get
-            {
-                return AllowedCaller.Both;
-            }
-        }
+        public AllowedCaller AllowedCaller => AllowedCaller.Both;
 
-        public string Name
-        {
-            get { return "admin"; }
-        }
+        public string Name => "admin";
 
-        public string Help
-        {
-            get { return "Give a player admin privileges";}
-        }
+        public string Help => "Give a player admin privileges";
 
-        public string Syntax
-        {
-            get { return ""; }
-        }
+        public string Syntax => "";
 
-        public List<string> Permissions
-        {
-            get
-            {
-                return new List<string>() { "rocket.admin" };
-            }
-        }
+        public List<string> Permissions => new List<string>() { "rocket.admin" };
 
-        public List<string> Aliases
-        {
-            get { return new List<string>(); }
-        }
+        public List<string> Aliases => new List<string>();
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
@@ -52,15 +28,15 @@ namespace Rocket.Unturned.Commands
                 if (player == null)
                 {
                     UnturnedChat.Say(caller, U.Translate("command_generic_invalid_parameter"));
-                    throw new WrongUsageOfCommandException(caller,this);
+                    throw new WrongUsageOfCommandException(caller, this);
                 }
 
                 if (!player.IsAdmin)
                 {
-                    UnturnedChat.Say(caller, "Successfully admined "+player.CharacterName);
+                    UnturnedChat.Say(caller, "Successfully admined " + player.CharacterName);
                     player.Admin(true);
                 }
-            }   
+            }
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using Rocket.Unturned.Player;
+﻿using Rocket.API;
+using Rocket.API.Extensions;
+using Rocket.Core.Extensions;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 using UnityEngine;
-using Rocket.Core.Extensions;
-using Rocket.API;
-using Rocket.API.Extensions;
-using Rocket.Core.Logging;
 
 namespace Rocket.Unturned.Events
 {
@@ -15,17 +14,19 @@ namespace Rocket.Unturned.Events
         private void Awake()
         {
             Instance = this;
-            Provider.onServerDisconnected += (CSteamID r) => {
+            Provider.onServerDisconnected += (CSteamID r) =>
+            {
                 if (r != CSteamID.Nil)
                 {
                     OnPlayerDisconnected.TryInvoke(UnturnedPlayer.FromCSteamID(r));
                 }
             };
-            Provider.onServerShutdown += () => { onShutdown.TryInvoke(); };
-            Provider.onServerConnected += (CSteamID r) => {
+            Provider.onServerShutdown += () => { OnShutdown.TryInvoke(); };
+            Provider.onServerConnected += (CSteamID r) =>
+            {
                 if (r != CSteamID.Nil)
                 {
-                    UnturnedPlayer p = (UnturnedPlayer)UnturnedPlayer.FromCSteamID(r);
+                    UnturnedPlayer p = UnturnedPlayer.FromCSteamID(r);
                     p.Player.gameObject.TryAddComponent<UnturnedPlayerFeatures>();
                     p.Player.gameObject.TryAddComponent<UnturnedPlayerMovement>();
                     p.Player.gameObject.TryAddComponent<UnturnedPlayerEvents>();
@@ -52,21 +53,9 @@ namespace Rocket.Unturned.Events
         public delegate void OnPlayerGetDamage(UnturnedPlayer player, ref EDeathCause cause, ref ELimb limb, ref UnturnedPlayer killer, ref Vector3 direction, ref float damage, ref float times, ref bool canDamage);
         public static event OnPlayerGetDamage OnPlayerDamaged;
 
-        private event ImplementationShutdown onShutdown;
-        public event ImplementationShutdown OnShutdown
-        {
-            add
-            {
-                onShutdown += value;
-            }
+        public event ImplementationShutdown OnShutdown;
 
-            remove
-            {
-                onShutdown -= value;
-            }
-        }
-
-        internal static void triggerOnPlayerConnected(UnturnedPlayer player)
+        internal static void TriggerOnPlayerConnected(UnturnedPlayer player)
         {
             Instance.OnPlayerConnected.TryInvoke(player);
         }

@@ -18,7 +18,7 @@ namespace Rocket.Unturned.Permissions
     {
         public delegate void JoinRequested(CSteamID player, ref ESteamRejection? rejectionReason);
         public static event JoinRequested OnJoinRequested;
-        
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         internal static bool CheckPermissions(SteamPlayer caller, string permission)
         {
@@ -61,21 +61,21 @@ namespace Rocket.Unturned.Permissions
             try
             {
 
-                var playerGroups = R.Permissions.GetGroups(new RocketPlayer(r.m_SteamID.ToString()), true);
+                System.Collections.Generic.List<RocketPermissionsGroup> playerGroups = R.Permissions.GetGroups(new RocketPlayer(r.m_SteamID.ToString()), true);
 
                 string prefix = playerGroups.FirstOrDefault(x => !string.IsNullOrEmpty(x.Prefix))?.Prefix ?? "";
                 string suffix = playerGroups.FirstOrDefault(x => !string.IsNullOrEmpty(x.Suffix))?.Suffix ?? "";
 
-                if (prefix != "" || suffix != "") 
+                if (prefix != "" || suffix != "")
                 {
                     SteamPending steamPending = Provider.pending.FirstOrDefault(x => x.playerID.steamID == r.m_SteamID);
                     if (steamPending != null)
                     {
-                        if (prefix != "" && !steamPending.playerID.characterName.StartsWith(prefix)) 
+                        if (prefix != "" && !steamPending.playerID.characterName.StartsWith(prefix))
                         {
                             steamPending.playerID.characterName = $"{prefix}{steamPending.playerID.characterName}";
                         }
-                        if (suffix != "" && !steamPending.playerID.characterName.EndsWith(suffix)) 
+                        if (suffix != "" && !steamPending.playerID.characterName.EndsWith(suffix))
                         {
                             steamPending.playerID.characterName = $"{steamPending.playerID.characterName}{suffix}";
                         }
@@ -90,7 +90,7 @@ namespace Rocket.Unturned.Permissions
 
             if (OnJoinRequested != null)
             {
-                foreach (var handler in OnJoinRequested.GetInvocationList().Cast<JoinRequested>())
+                foreach (JoinRequested handler in OnJoinRequested.GetInvocationList().Cast<JoinRequested>())
                 {
                     try
                     {

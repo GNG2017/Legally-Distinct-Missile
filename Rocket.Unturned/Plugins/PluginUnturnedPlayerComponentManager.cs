@@ -1,8 +1,5 @@
 ﻿using Rocket.API;
-using Rocket.API.Extensions;
-using Rocket.Core.Logging;
 using Rocket.Core.Utils;
-using Rocket.Unturned.Events;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using System;
@@ -15,55 +12,74 @@ namespace Rocket.Unturned.Plugins
 {
     public sealed class PluginUnturnedPlayerComponentManager : MonoBehaviour
     {
-        private Assembly assembly;
-        private List<Type> unturnedPlayerComponents = new List<Type>();
-        
+        private Assembly _assembly;
+        private readonly List<Type> _unturnedPlayerComponents = new List<Type>();
+
+        #region Start & Stop
+        private void OnEnable()
+        {
+            try
+            {
+                IRocketPlugin plugin = GetComponent<IRocketPlugin>();
+                _assembly = plugin.GetType().Assembly;
+
+
+                //This is called before 'OnBeforePlayerConnected'
+                _unturnedPlayerComponents.AddRange(RocketHelper.GetTypesFromParentClass(_assembly, typeof(UnturnedPlayerComponent)));
+                Provider.onEnemyConnected += OnConnect;
+
+
+                //Apply to existing players
+                foreach (SteamPlayer client in Provider.clients)
+                {
+                    GiveAllComponents(client.player.gameObject);
+                }
+            }
+            catch (Exception ex)
+            {
+                Core.Logging.Logger.LogException(ex);
+            }
+        }
+
         private void OnDisable()
         {
             try
             {
-                U.Events.OnPlayerConnected -= addPlayerComponents;
-                unturnedPlayerComponents = unturnedPlayerComponents.Where(p => p.Assembly != assembly).ToList();
-                List<Type> playerComponents = RocketHelper.GetTypesFromParentClass(assembly, typeof(UnturnedPlayerComponent));
-                foreach (Type playerComponent in playerComponents)
+                Provider.onEnemyConnected -= OnConnect;
+
+
+                //Remove from existing players
+                foreach (Component comp in Provider.clients.SelectMany(client => _unturnedPlayerComponents.Select(playerComponent => client.player.gameObject.GetComponent(playerComponent)).Where(comp => comp != null)))
                 {
-                    //Provider.Players.ForEach(p => p.Player.gameObject.TryRemoveComponent(playerComponent.GetType()));
+                    Destroy(comp);
                 }
+
+
+                _unturnedPlayerComponents.Clear();
+                _assembly = null;
             }
             catch (Exception ex)
             {
                 Core.Logging.Logger.LogException(ex);
             }
         }
+        #endregion
 
-        private void OnEnable()
+        #region Events
+        private void OnConnect(SteamPlayer steamPlayer)
         {
-            try
-            {  
-                IRocketPlugin plugin = GetComponent<IRocketPlugin>();
-                assembly = plugin.GetType().Assembly;
+            GiveAllComponents(steamPlayer.player.gameObject);
+        }
+        #endregion
 
-                U.Events.OnBeforePlayerConnected += addPlayerComponents;
-                unturnedPlayerComponents.AddRange(RocketHelper.GetTypesFromParentClass(assembly, typeof(UnturnedPlayerComponent)));
-
-                foreach (Type playerComponent in unturnedPlayerComponents)
-                {
-                    Core.Logging.Logger.Log("Adding UnturnedPlayerComponent: "+playerComponent.Name);
-                    //Provider.Players.ForEach(p => p.Player.gameObject.TryAddComponent(playerComponent.GetType()));
-                }
-            }
-            catch (Exception ex)
+        #region Functions
+        private void GiveAllComponents(GameObject playerGameObject)
+        {
+            foreach (Type playerComponent in _unturnedPlayerComponents.Where(comp => playerGameObject.GetComponent(comp) == null))
             {
-                Core.Logging.Logger.LogException(ex);
+                playerGameObject.AddComponent(playerComponent);
             }
         }
-
-        private void addPlayerComponents(IRocketPlayer p)
-        {
-            foreach (Type component in unturnedPlayerComponents)
-            {
-                ((UnturnedPlayer)p).Player.gameObject.AddComponent(component);
-            }
-        }
+        #endregion
     }
 }

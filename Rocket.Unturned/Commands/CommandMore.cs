@@ -2,44 +2,23 @@
 using Rocket.API.Extensions;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Rocket.Unturned.Commands
 {
     public class CommandMore : IRocketCommand
     {
-        public List<string> Aliases
-        {
-            get { return new List<string>(); }
-        }
+        public List<string> Aliases => new List<string>();
 
-        public AllowedCaller AllowedCaller
-        {
-            get { return AllowedCaller.Player; }
-        }
+        public AllowedCaller AllowedCaller => AllowedCaller.Player;
 
-        public string Help
-        {
-            get { return "Gives more of an item that you have in your hands."; }
-        }
+        public string Help => "Gives more of an item that you have in your hands.";
 
-        public string Name
-        {
-            get{ return "more"; }
-        }
+        public string Name => "more";
 
-        public List<string> Permissions
-        {
-            get{ return new List<string>() { "rocket.more" }; }
-        }
+        public List<string> Permissions => new List<string>() { "rocket.more" };
 
-        public string Syntax
-        {
-            get{ return "<amount>"; }
-        }
+        public string Syntax => "<amount>";
 
         public void Execute(IRocketPlayer caller, string[] command)
         {

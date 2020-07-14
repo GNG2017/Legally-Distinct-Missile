@@ -1,5 +1,4 @@
-﻿using Rocket.API.Extensions;
-using Rocket.Unturned.Events;
+﻿using Rocket.Unturned.Events;
 using SDG.Unturned;
 using System;
 using UnityEngine;
@@ -14,15 +13,15 @@ namespace Rocket.Unturned.Player
         internal Color? color = null;
         internal Color? Color
         {
-            get { return color; }
-            set { color = value; }
+            get => color;
+            set => color = value;
         }
 
 
         private bool vanishMode = false;
         public bool VanishMode
         {
-            get { return vanishMode; }
+            get => vanishMode;
             set
             {
                 Player.GetComponent<UnturnedPlayerMovement>().VanishMode = value;
@@ -31,8 +30,12 @@ namespace Rocket.Unturned.Player
                 if (vanishMode && !value)
                 {
                     pMovement.updates.Add(new PlayerStateUpdate(pMovement.real, Player.Player.look.angle, Player.Player.look.rot));
+#pragma warning disable CS0612 // 'PlayerMovement.isUpdated' is obsolete
                     pMovement.isUpdated = true;
+#pragma warning restore CS0612 // 'PlayerMovement.isUpdated' is obsolete
+#pragma warning disable CS0612 // 'PlayerManager.updates' is obsolete
                     PlayerManager.updates++;
+#pragma warning restore CS0612 // 'PlayerManager.updates' is obsolete
                 }
                 vanishMode = value;
             }
@@ -45,6 +48,7 @@ namespace Rocket.Unturned.Player
             {
                 if (value)
                 {
+<<<<<<< Updated upstream
                     Player.Events.OnUpdateHealth += e_OnPlayerUpdateHealth;
                     Player.Events.OnUpdateWater += e_OnPlayerUpdateWater;
                     Player.Events.OnUpdateFood += e_OnPlayerUpdateFood;
@@ -56,26 +60,40 @@ namespace Rocket.Unturned.Player
                     Player.Events.OnUpdateWater -= e_OnPlayerUpdateWater;
                     Player.Events.OnUpdateFood -= e_OnPlayerUpdateFood;
                     Player.Events.OnUpdateVirus -= e_OnPlayerUpdateVirus;
+=======
+                    Player.Events.OnUpdateHealth += OnPlayerUpdateHealth;
+                    Player.Events.OnUpdateWater += OnPlayerUpdateWater;
+                    Player.Events.OnUpdateFood += OnPlayerUpdateFood;
+                    Player.Events.OnUpdateVirus += OnPlayerUpdateVirus;
+                    Player.Events.OnUpdateBleeding += OnPlayerUpdateBleeding;
+                    Player.Events.OnUpdateBroken += OnPlayerUpdateBroken;
+                }
+                else
+                {
+                    Player.Events.OnUpdateHealth -= OnPlayerUpdateHealth;
+                    Player.Events.OnUpdateWater -= OnPlayerUpdateWater;
+                    Player.Events.OnUpdateFood -= OnPlayerUpdateFood;
+                    Player.Events.OnUpdateVirus -= OnPlayerUpdateVirus;
+                    Player.Events.OnUpdateBleeding -= OnPlayerUpdateBleeding;
+                    Player.Events.OnUpdateBroken -= OnPlayerUpdateBroken;
+>>>>>>> Stashed changes
                 }
                 godMode = value;
             }
-            get
-            {
-                return godMode;
-            }
+            get => godMode;
         }
 
         private bool initialCheck;
-
-        Vector3 oldPosition = new Vector3();
+        private Vector3 oldPosition = new Vector3();
 
         private void FixedUpdate()
         {
             if (oldPosition != Player.Position)
             {
-                UnturnedPlayerEvents.fireOnPlayerUpdatePosition(Player);
+                UnturnedPlayerEvents.FireOnPlayerUpdatePosition(Player);
                 oldPosition = Player.Position;
             }
+
             if (!initialCheck && (DateTime.Now - Joined).TotalSeconds > 3)
             {
                 Check();
@@ -85,7 +103,7 @@ namespace Rocket.Unturned.Player
         private void Check()
         {
             initialCheck = true;
-           
+
             if (U.Settings.Instance.CharacterNameValidation)
             {
                 string username = Player.CharacterName;
@@ -110,10 +128,10 @@ namespace Rocket.Unturned.Player
 
             if (godMode)
             {
-                Player.Events.OnUpdateHealth += e_OnPlayerUpdateHealth;
-                Player.Events.OnUpdateWater += e_OnPlayerUpdateWater;
-                Player.Events.OnUpdateFood += e_OnPlayerUpdateFood;
-                Player.Events.OnUpdateVirus += e_OnPlayerUpdateVirus;
+                Player.Events.OnUpdateHealth += OnPlayerUpdateHealth;
+                Player.Events.OnUpdateWater += OnPlayerUpdateWater;
+                Player.Events.OnUpdateFood += OnPlayerUpdateFood;
+                Player.Events.OnUpdateVirus += OnPlayerUpdateVirus;
                 Player.Heal(100);
                 Player.Infection = 0;
                 Player.Hunger = 0;
@@ -123,22 +141,31 @@ namespace Rocket.Unturned.Player
             }
         }
 
-        private void e_OnPlayerUpdateVirus(UnturnedPlayer player, byte virus)
+        private void OnPlayerUpdateVirus(UnturnedPlayer player, byte virus)
         {
-            if (virus < 95) Player.Infection = 0;
+            if (virus < 95)
+            {
+                Player.Infection = 0;
+            }
         }
 
-        private void e_OnPlayerUpdateFood(UnturnedPlayer player, byte food)
+        private void OnPlayerUpdateFood(UnturnedPlayer player, byte food)
         {
-            if (food < 95) Player.Hunger = 0;
+            if (food < 95)
+            {
+                Player.Hunger = 0;
+            }
         }
 
-        private void e_OnPlayerUpdateWater(UnturnedPlayer player, byte water)
+        private void OnPlayerUpdateWater(UnturnedPlayer player, byte water)
         {
-            if (water < 95) Player.Thirst = 0;
+            if (water < 95)
+            {
+                Player.Thirst = 0;
+            }
         }
 
-        private void e_OnPlayerUpdateHealth(UnturnedPlayer player, byte health)
+        private void OnPlayerUpdateHealth(UnturnedPlayer player, byte health)
         {
             if (health < 95)
             {
@@ -147,5 +174,24 @@ namespace Rocket.Unturned.Player
                 Player.Broken = false;
             }
         }
+<<<<<<< Updated upstream
+=======
+
+        private void OnPlayerUpdateBleeding(UnturnedPlayer player, bool bleeding)
+        {
+            if (bleeding)
+            {
+                player.Bleeding = false;
+            }
+        }
+
+        private void OnPlayerUpdateBroken(UnturnedPlayer player, bool broken)
+        {
+            if (broken)
+            {
+                player.Broken = false;
+            }
+        }
+>>>>>>> Stashed changes
     }
 }

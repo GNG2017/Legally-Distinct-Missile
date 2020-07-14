@@ -1,13 +1,6 @@
-using Rocket.Core;
-using Rocket.Core.Logging;
-using Rocket.Core.Utils;
 using Rocket.Unturned.Player;
-using SDG.Provider;
-using SDG.Provider.Services.Achievements;
 using SDG.Unturned;
-using Steamworks;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Rocket.Unturned
@@ -15,12 +8,12 @@ namespace Rocket.Unturned
     public class UnturnedPlayerMovement : UnturnedPlayerComponent
     {
         public bool VanishMode = false;
-        DateTime lastUpdate = DateTime.Now;
-        Vector3 lastVector = new Vector3(0,-1,0);
+        private DateTime lastUpdate = DateTime.Now;
+        private Vector3 lastVector = new Vector3(0, -1, 0);
 
         private void FixedUpdate()
         {
-            PlayerMovement movement = (PlayerMovement)Player.GetComponent<PlayerMovement>();
+            PlayerMovement movement = Player.GetComponent<PlayerMovement>();
 
             if (!VanishMode)
             {
@@ -32,12 +25,12 @@ namespace Rocket.Unturned
 
                     if (lastVector.y != -1)
                     {
-                        float x = Math.Abs(lastVector.x - positon.x);
                         float y = positon.y - lastVector.y;
-                        float z = Math.Abs(lastVector.z - positon.z);
                         if (y > 15)
                         {
+#pragma warning disable IDE0059 // Unnecessary assignment of a value
                             RaycastHit raycastHit = new RaycastHit();
+#pragma warning restore IDE0059 // Unnecessary assignment of a value
                             Physics.Raycast(positon, Vector3.down, out raycastHit);
                             Vector3 floor = raycastHit.point;
                             float distance = Math.Abs(floor.y - positon.y);

@@ -1,49 +1,26 @@
 ﻿using Rocket.API;
 using Rocket.Core;
-using Rocket.Core.Plugins;
+using Rocket.Unturned.Chat;
 using SDG.Unturned;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Rocket.Unturned.Chat;
 
 namespace Rocket.Unturned.Commands
 {
     public class CommandHelp : IRocketCommand
     {
-        public AllowedCaller AllowedCaller
-        {
-            get
-            {
-                return AllowedCaller.Both;
-            }
-        }
+        public AllowedCaller AllowedCaller => AllowedCaller.Both;
 
-        public string Name
-        {
-            get { return "help"; }
-        }
+        public string Name => "help";
 
-        public string Help
-        {
-            get { return "Shows you a specific help";}
-        }
+        public string Help => "Shows you a specific help";
 
-        public string Syntax
-        {
-            get { return "[command]"; }
-        }
+        public string Syntax => "[command]";
 
-        public List<string> Aliases
-        {
-            get { return new List<string>(); }
-        }
+        public List<string> Aliases => new List<string>();
 
-        public List<string> Permissions
-        {
-                get { return new List<string>() { "rocket.help" }; }
-        }
+        public List<string> Permissions => new List<string>() { "rocket.help" };
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
@@ -68,11 +45,11 @@ namespace Rocket.Unturned.Commands
             }
             else
             {
-                IRocketCommand cmd = R.Commands.Commands.Where(c => (String.Compare(c.Name, command[0], true) == 0)).FirstOrDefault();
+                IRocketCommand cmd = R.Commands.Commands.Where(c => (string.Compare(c.Name, command[0], true) == 0)).FirstOrDefault();
                 if (cmd != null)
                 {
                     string commandName = cmd.GetType().Assembly.GetName().Name + " / " + cmd.Name;
-                   
+
                     UnturnedChat.Say(caller, "[" + commandName + "]");
                     UnturnedChat.Say(caller, cmd.Name + "\t\t" + cmd.Syntax);
                     UnturnedChat.Say(caller, cmd.Help);

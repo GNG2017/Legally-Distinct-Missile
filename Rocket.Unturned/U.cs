@@ -4,11 +4,9 @@ using Rocket.API.Extensions;
 using Rocket.Core;
 using Rocket.Core.Assets;
 using Rocket.Core.Extensions;
-using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using Rocket.Unturned.Chat;
 using Rocket.Unturned.Commands;
-using Rocket.Unturned.Effects;
 using Rocket.Unturned.Events;
 using Rocket.Unturned.Permissions;
 using Rocket.Unturned.Player;
@@ -27,11 +25,11 @@ namespace Rocket.Unturned
 {
     public class U : MonoBehaviour, IRocketImplementation, IModuleNexus
     {
-        private static GameObject rocketGameObject; 
+        private static GameObject rocketGameObject;
         public static U Instance;
 
         private static readonly TranslationList defaultTranslations = new TranslationList(){
-            { "command_generic_failed_find_player","Failed to find player"},
+                { "command_generic_failed_find_player","Failed to find player"},
                 { "command_generic_invalid_parameter","Invalid parameter"},
                 { "command_generic_target_player_not_found","Target player not found"},
                 { "command_generic_teleport_while_driving_error","You cannot teleport while driving or riding in a vehicle."},
@@ -116,12 +114,12 @@ namespace Rocket.Unturned
                 { "invalid_character_name","invalid character name"},
                 { "command_not_found","Command not found."}
         };
-         
+
 
         public static XMLFileAsset<UnturnedSettings> Settings;
         public static XMLFileAsset<TranslationList> Translation;
 
-        public IRocketImplementationEvents ImplementationEvents { get { return Events; } }
+        public IRocketImplementationEvents ImplementationEvents => Events;
         public static UnturnedEvents Events;
 
         public event RocketImplementationInitialized OnRocketImplementationInitialized;
@@ -142,17 +140,16 @@ namespace Rocket.Unturned
                 rocketGameObject = new GameObject("Rocket");
                 DontDestroyOnLoad(rocketGameObject);
 
-                if(System.Environment.OSVersion.Platform == PlatformID.Unix || System.Environment.OSVersion.Platform == PlatformID.MacOSX)
+                if (System.Environment.OSVersion.Platform == PlatformID.Unix || System.Environment.OSVersion.Platform == PlatformID.MacOSX)
+                {
 #pragma warning disable CS0618
                     Console = rocketGameObject.AddComponent<UnturnedConsole>();
+                }
 #pragma warning restore CS0618
-                
+
                 CommandWindow.Log("Rocket Unturned v" + Assembly.GetExecutingAssembly().GetName().Version.ToString() + " for Unturned v" + Provider.APP_VERSION);
 
-                R.OnRockedInitialized += () =>
-                {
-                    Instance.Initialize();
-                };
+                R.OnRockedInitialized += () => Instance.Initialize();
 
                 Provider.onServerHosted += () =>
                 {
@@ -161,7 +158,7 @@ namespace Rocket.Unturned
                 };
             }
         }
-        
+
         private void Awake()
         {
             Instance = this;
@@ -173,7 +170,7 @@ namespace Rocket.Unturned
             try
             {
                 Settings = new XMLFileAsset<UnturnedSettings>(Environment.SettingsFile);
-                Translation = new XMLFileAsset<TranslationList>(String.Format(Environment.TranslationFile, Core.R.Settings.Instance.LanguageCode), new Type[] { typeof(TranslationList), typeof(TranslationListEntry) }, defaultTranslations);
+                Translation = new XMLFileAsset<TranslationList>(string.Format(Environment.TranslationFile, Core.R.Settings.Instance.LanguageCode), new Type[] { typeof(TranslationList), typeof(TranslationListEntry) }, defaultTranslations);
                 defaultTranslations.AddUnknownEntries(Translation);
                 Events = gameObject.TryAddComponent<UnturnedEvents>();
 
@@ -183,7 +180,7 @@ namespace Rocket.Unturned
 
                 gameObject.TryAddComponent<AutomaticSaveWatchdog>();
 
-                bindDelegates();
+                BindDelegates();
 
                 RocketPlugin.OnPluginLoading += (IRocketPlugin plugin, ref bool cancelLoading) =>
                 {
@@ -209,7 +206,7 @@ namespace Rocket.Unturned
                 {
                     R.Plugins.OnPluginsLoaded += () =>
                     {
-                        SteamGameServer.SetKeyValue("rocketplugins", String.Join(",", R.Plugins.GetPlugins().Select(p => p.Name).ToArray()));
+                        SteamGameServer.SetKeyValue("rocketplugins", string.Join(",", R.Plugins.GetPlugins().Select(p => p.Name).ToArray()));
                     };
 
 
@@ -231,20 +228,26 @@ namespace Rocket.Unturned
                 Core.Logging.Logger.LogException(ex);
             }
         }
-        
-        private void bindDelegates()
+
+        private void BindDelegates()
         {
             CommandWindow.onCommandWindowInputted += (string text, ref bool shouldExecuteCommand) =>
             {
-                if (text.StartsWith("/")) text.Substring(1);
-                if (R.Commands != null) R.Commands.Execute(new ConsolePlayer(), text);
+                if (text.StartsWith("/"))
+                {
+                    text = text.Substring(1);
+                }
+
+                if (R.Commands != null)
+                {
+                    R.Commands.Execute(new ConsolePlayer(), text);
+                }
+
                 shouldExecuteCommand = false;
             };
 
             CommandWindow.onCommandWindowOutputted += (object text, ConsoleColor color) =>
-            {
                 Core.Logging.Logger.ExternalLog(text, color);
-            };
 
             /*
             SteamChannel.onTriggerReceive += (SteamChannel channel, CSteamID steamID, byte[] packet, int offset, int size) =>
@@ -254,19 +257,18 @@ namespace Rocket.Unturned
              */
 
             SteamChannel.onTriggerSend += (SteamPlayer player, string name, ESteamCall mode, ESteamPacket type, object[] arguments) =>
-            {
                 UnturnedPlayerEvents.TriggerSend(player, name, mode, type, arguments);
-            };
 
             ChatManager.onCheckPermissions += (SteamPlayer player, string text, ref bool shouldExecuteCommand, ref bool shouldList) =>
             {
                 if (text.StartsWith("/"))
                 {
-                    text.Substring(1);
+                    text = text.Substring(1);
                     if (R.Commands != null && UnturnedPermissions.CheckPermissions(player, text))
                     {
                         R.Commands.Execute(UnturnedPlayer.FromSteamPlayer(player), text);
                     }
+
                     shouldList = false;
                 }
                 shouldExecuteCommand = false;
@@ -274,10 +276,12 @@ namespace Rocket.Unturned
 
             Provider.onCheckValid += (ValidateAuthTicketResponse_t callback, ref bool isValid) =>
             {
-                if(isValid)
+                if (isValid)
+                {
                     isValid = UnturnedPermissions.CheckValid(callback);
+                }
             };
-    }
+        }
 
         public void Reload()
         {
@@ -290,18 +294,9 @@ namespace Rocket.Unturned
             Shutdown();
         }
 
-        public void Shutdown()
-        {
+        public void Shutdown() { }
 
-        }
-
-        public string InstanceId
-        {
-            get
-            {
-                return Dedicator.serverID;
-            } 
-        }
+        public string InstanceId => Dedicator.serverID;
     }
-               
+
 }

@@ -1,13 +1,15 @@
-﻿using System;
+﻿using SDG.Unturned;
+using System;
 using System.Linq;
-using SDG.Unturned;
 
 namespace Rocket.Unturned.Items
 {
-    public class Attachment{
+    public class Attachment
+    {
         public ushort AttachmentId = 0;
         public byte Durability = 100;
-        public Attachment(ushort attachmentId, byte durability){
+        public Attachment(ushort attachmentId, byte durability)
+        {
             AttachmentId = attachmentId;
             Durability = durability;
         }
@@ -17,14 +19,22 @@ namespace Rocket.Unturned.Items
     {
         public static ItemAsset GetItemAssetByName(string name)
         {
-            if (String.IsNullOrEmpty(name)) return null;
-            return SDG.Unturned.Assets.find(EAssetType.ITEM).Cast<ItemAsset>().Where(i => i.itemName != null && i.itemName.ToLower().Contains(name.ToLower())).FirstOrDefault();
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+
+            return Assets.find(EAssetType.ITEM).Cast<ItemAsset>().Where(i => i.itemName != null && i.itemName.ToLower().Contains(name.ToLower())).FirstOrDefault();
         }
 
         public static ItemAsset GetItemAssetById(ushort id)
         {
-            Asset asset = SDG.Unturned.Assets.find(EAssetType.ITEM, id);
-            if (asset == null) return null;
+            Asset asset = Assets.find(EAssetType.ITEM, id);
+            if (asset == null)
+            {
+                return null;
+            }
+
             return (ItemAsset)asset;
         }
 
@@ -74,14 +84,14 @@ namespace Rocket.Unturned.Items
 
             metadata[10] = clipsize;
             metadata[11] = (byte)firemode;
-            metadata[12] = (byte)1;
+            metadata[12] = 1;
 
-            return AssembleItem(itemId,amount,durability,metadata);
+            return AssembleItem(itemId, amount, durability, metadata);
         }
 
         public static Item AssembleItem(ushort itemId, byte amount = 1, byte durability = 100, byte[] metadata = null)
         {
-            return new Item(itemId, amount, durability, (metadata == null ? new byte[0] : metadata));
+            return new Item(itemId, amount, durability, metadata ?? (new byte[0]));
         }
     }
 }

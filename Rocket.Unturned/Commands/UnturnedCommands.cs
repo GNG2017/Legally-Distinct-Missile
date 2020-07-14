@@ -1,15 +1,11 @@
-﻿using Rocket.Core;
-using Rocket.Core.Logging;
-using Rocket.Unturned.Events;
+﻿using Rocket.API;
+using Rocket.Core;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
-using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using Rocket.API;
-using Rocket.Core.Utils;
 
 namespace Rocket.Unturned.Commands
 {
@@ -17,9 +13,9 @@ namespace Rocket.Unturned.Commands
     {
         private void Awake()
         {
-            foreach(Command vanillaCommand in Commander.commands)
+            foreach (Command vanillaCommand in Commander.commands)
             {
-                R.Commands.Register(new UnturnedVanillaCommand(vanillaCommand),vanillaCommand.command.ToLower(),Core.Serialization.CommandPriority.Low);
+                R.Commands.Register(new UnturnedVanillaCommand(vanillaCommand), vanillaCommand.command.ToLower(), Core.Serialization.CommandPriority.Low);
             }
         }
 
@@ -32,62 +28,26 @@ namespace Rocket.Unturned.Commands
                 this.command = command;
             }
 
-            public List<string> Aliases
-            {
-                get
-                {
-                   return new List<string>();
-                }
-            }
+            public List<string> Aliases => new List<string>();
 
-            public AllowedCaller AllowedCaller
-            {
-                get
-                {
-                    return AllowedCaller.Both;
-                }
-            }
+            public AllowedCaller AllowedCaller => AllowedCaller.Both;
 
-            public string Help
-            {
-                get
-                {
-                    return command.help;
-                }
-            }
+            public string Help => command.help;
 
-            public string Name
-            {
-                get
-                {
-                    return command.command;
-                }
-            }
+            public string Name => command.command;
 
-            public List<string> Permissions
-            {
-                get
-                {
-                    return new List<string>() { "unturned."+command.command.ToLower() };
-                }
-            }
+            public List<string> Permissions => new List<string>() { "unturned." + command.command.ToLower() };
 
-            public string Syntax
-            {
-                get
-                {
-                    return command.info.Replace("/"," ");
-                }
-            }
+            public string Syntax => command.info.Replace("/", " ");
 
             public void Execute(IRocketPlayer caller, string[] command)
             {
                 CSteamID id = CSteamID.Nil;
-                if(caller is UnturnedPlayer)
+                if (caller is UnturnedPlayer player)
                 {
-                    id = ((UnturnedPlayer)caller).CSteamID;
+                    id = player.CSteamID;
                 }
-                Commander.commands.Where(c => c.command == Name).FirstOrDefault()?.check(id,Name, String.Join("/", command));
+                Commander.commands.Where(c => c.command == Name).FirstOrDefault()?.check(id, Name, string.Join("/", command));
             }
         }
 
