@@ -1,44 +1,23 @@
 ﻿using Rocket.API;
 using Rocket.Core.Logging;
 using Rocket.Core.RCON;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Rocket.Core.Commands
 {
-    class CommandRFlush : IRocketCommand
+    internal class CommandRFlush : IRocketCommand
     {
-        public List<string> Aliases
-        {
-            get { return new List<string>(); }
-        }
+        public List<string> Aliases => new List<string>();
 
-        public AllowedCaller AllowedCaller
-        {
-            get { return AllowedCaller.Console; }
-        }
+        public AllowedCaller AllowedCaller => AllowedCaller.Console;
 
-        public string Help
-        {
-            get { return "Kicks all RCON clients off of the server."; }
-        }
+        public string Help => "Kicks all RCON clients off of the server.";
 
-        public string Name
-        {
-            get { return "rflush"; }
-        }
+        public string Name => "rflush";
 
-        public List<string> Permissions
-        {
-            get { return new List<string>() { "rocket.rflush" }; }
-        }
+        public List<string> Permissions => new List<string>() { "rocket.rflush" };
 
-        public string Syntax
-        {
-            get { return ""; }
-        }
+        public string Syntax => "";
 
         public void Execute(IRocketPlayer caller, string[] command)
         {

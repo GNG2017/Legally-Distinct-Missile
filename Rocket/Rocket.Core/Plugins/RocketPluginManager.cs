@@ -1,12 +1,12 @@
 ﻿using Rocket.API;
+using Rocket.Core.Extensions;
 using Rocket.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using System.Linq;
-using Rocket.Core.Extensions;
 
 namespace Rocket.Core.Plugins
 {
@@ -16,58 +16,39 @@ namespace Rocket.Core.Plugins
         public event PluginsLoaded OnPluginsLoaded;
 
         private static List<Assembly> pluginAssemblies;
-        private static List<GameObject> plugins = new List<GameObject>();
-        internal static List<IRocketPlugin> Plugins { get { return plugins.Select(g => g.GetComponent<IRocketPlugin>()).Where(p => p != null).ToList<IRocketPlugin>(); } }
+        private static readonly List<GameObject> plugins = new List<GameObject>();
+        internal static List<IRocketPlugin> Plugins => plugins.Select(g => g.GetComponent<IRocketPlugin>()).Where(p => p != null).ToList<IRocketPlugin>();
         private Dictionary<string, string> libraries = new Dictionary<string, string>();
 
-        public List<IRocketPlugin> GetPlugins()
-        {
-            return Plugins;
-        }
+        public List<IRocketPlugin> GetPlugins() => Plugins;
 
-        public IRocketPlugin GetPlugin(Assembly assembly)
-        {
-            return plugins.Select(g => g.GetComponent<IRocketPlugin>()).Where(p => p != null && p.GetType().Assembly == assembly).FirstOrDefault();
-        }
+        public IRocketPlugin GetPlugin(Assembly assembly) => plugins.Select(g => g.GetComponent<IRocketPlugin>()).Where(p => p != null && p.GetType().Assembly == assembly).FirstOrDefault();
 
-        public IRocketPlugin GetPlugin(string name)
-        {
-            return plugins.Select(g => g.GetComponent<IRocketPlugin>()).Where(p => p != null && ((IRocketPlugin)p).Name == name).FirstOrDefault();
-        }
+        public IRocketPlugin GetPlugin(string name) => plugins.Select(g => g.GetComponent<IRocketPlugin>()).Where(p => p != null && p.Name == name).FirstOrDefault();
 
-        private void Awake() {
+        private void Awake()
+        {
             AppDomain.CurrentDomain.AssemblyResolve += delegate (object sender, ResolveEventArgs args)
             {
-                string file;
-                if (libraries.TryGetValue(args.Name, out file))
-                {
+                if (libraries.TryGetValue(args.Name, out string file))
                     return Assembly.Load(File.ReadAllBytes(file));
-                }
                 else
-                {
                     Logging.Logger.LogError("Could not find dependency: " + args.Name);
-                }
                 return null;
             };
         }
 
-        private void Start()
-        {
-            loadPlugins();
-        }
+        private void Start() => LoadPlugins();
 
-        public Type GetMainTypeFromAssembly(Assembly assembly)
-        {
-            return RocketHelper.GetTypesFromInterface(assembly, "IRocketPlugin").FirstOrDefault();
-        }
+        public Type GetMainTypeFromAssembly(Assembly assembly) => RocketHelper.GetTypesFromInterface(assembly, "IRocketPlugin").FirstOrDefault();
 
-        private void loadPlugins()
+        private void LoadPlugins()
         {
             libraries = GetAssembliesFromDirectory(Environment.LibrariesDirectory);
-            foreach(KeyValuePair<string,string> pair in GetAssembliesFromDirectory(Environment.PluginsDirectory))
+            foreach (KeyValuePair<string, string> pair in GetAssembliesFromDirectory(Environment.PluginsDirectory))
             {
-                if(!libraries.ContainsKey(pair.Key))
-                    libraries.Add(pair.Key,pair.Value);
+                if (!libraries.ContainsKey(pair.Key))
+                    libraries.Add(pair.Key, pair.Value);
             }
 
             pluginAssemblies = LoadAssembliesFromDirectory(Environment.PluginsDirectory);
@@ -81,18 +62,17 @@ namespace Rocket.Core.Plugins
             OnPluginsLoaded.TryInvoke();
         }
 
-        private void unloadPlugins() {
-            for(int i = plugins.Count; i > 0; i--)
-            {
-                Destroy(plugins[i-1]);
-            }
+        private void UnloadPlugins()
+        {
+            for (int i = plugins.Count; i > 0; i--)
+                Destroy(plugins[i - 1]);
             plugins.Clear();
         }
 
         internal void Reload()
         {
-            unloadPlugins();
-            loadPlugins();
+            UnloadPlugins();
+            LoadPlugins();
         }
 
         public static Dictionary<string, string> GetAssembliesFromDirectory(string directory, string extension = "*.dll")
@@ -126,7 +106,7 @@ namespace Rocket.Core.Plugins
 
                     if (types.Count == 1)
                     {
-                        Logging.Logger.Log("Loading "+ assembly.GetName().Name +" from "+ assembly.Location);
+                        Logging.Logger.Log("Loading " + assembly.GetName().Name + " from " + assembly.Location);
                         assemblies.Add(assembly);
                     }
                     else

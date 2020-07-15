@@ -10,15 +10,14 @@ namespace Rocket.Core.Logging
     {
         private static string lastAssembly = "";
 
-        [Obsolete("Log(string message,bool sendToConsole) is obsolete, use Log(string message,ConsoleColor color) instead",true)]
-        public static void Log(string message, bool sendToConsole)
-        {
-            Log(message, ConsoleColor.White);
-        }
+        [Obsolete("Log(string message,bool sendToConsole) is obsolete, use Log(string message,ConsoleColor color) instead", true)]
+        public static void Log(string message, bool sendToConsole) => Log(message, ConsoleColor.White);
 
         public static void Log(string message, ConsoleColor color = ConsoleColor.White)
         {
-            if (message == null) return;
+            if (message == null)
+                return;
+
             string assembly = "";
             try
             {
@@ -28,17 +27,11 @@ namespace Rocket.Core.Logging
                     assembly = stackTrace.GetFrame(1).GetMethod().DeclaringType.Assembly.GetName().Name;
 
                 if ((assembly.StartsWith("Rocket.") || assembly == "Assembly-CSharp" || assembly == "UnityEngine") && stackTrace.FrameCount > 2)
-                {
                     assembly = stackTrace.GetFrame(2).GetMethod().DeclaringType.Assembly.GetName().Name;
-                }
                 if (assembly == "" || assembly == typeof(Logger).Assembly.GetName().Name || assembly == lastAssembly || assembly.StartsWith("Rocket.") || assembly == "Assembly-CSharp" || assembly == "UnityEngine")
-                {
                     assembly = "";
-                }
                 else
-                {
-                    assembly = assembly + " >> ";
-                }
+                    assembly += " >> ";
 
                 lastAssembly = assembly;
                 message = assembly + message;
@@ -47,10 +40,10 @@ namespace Rocket.Core.Logging
             {
                 throw;
             }
-            ProcessInternalLog(ELogType.Info, message,color);
+            ProcessInternalLog(ELogType.Info, message);
         }
 
-        internal static string var_dump(object obj, int recursion)
+        internal static string Var_dump(object obj, int recursion)
         {
             StringBuilder result = new StringBuilder();
 
@@ -64,40 +57,40 @@ namespace Rocket.Core.Logging
                     try
                     {
                         object value = property.GetValue(obj, null);
-                        string indent = String.Empty;
+                        string indent = string.Empty;
                         string spaces = "|   ";
                         string trail = "|...";
 
                         if (recursion > 0)
-                        {
                             indent = new StringBuilder(trail).Insert(0, spaces, recursion - 1).ToString();
-                        }
 
                         if (value != null)
                         {
                             string displayValue = value.ToString();
-                            if (value is string) displayValue = String.Concat('"', displayValue, '"');
+                            if (value is string)
+                                displayValue = $"\"{displayValue}\"";
+
                             result.AppendFormat("{0}{1} = {2}\n", indent, property.Name, displayValue);
 
                             try
                             {
-                                if (!(value is ICollection))
+                                if (!(value is ICollection collection))
                                 {
-                                    result.Append(var_dump(value, recursion + 1));
+                                    result.Append(Var_dump(value, recursion + 1));
                                 }
                                 else
                                 {
                                     int elementCount = 0;
-                                    foreach (object element in ((ICollection)value))
+                                    foreach (object element in collection)
                                     {
-                                        string elementName = String.Format("{0}[{1}]", property.Name, elementCount);
+                                        string elementName = string.Format("{0}[{1}]", property.Name, elementCount);
                                         indent = new StringBuilder(trail).Insert(0, spaces, recursion).ToString();
                                         result.AppendFormat("{0}{1} = {2}\n", indent, elementName, element.ToString());
-                                        result.Append(var_dump(element, recursion + 2));
+                                        result.Append(Var_dump(element, recursion + 2));
                                         elementCount++;
                                     }
 
-                                    result.Append(var_dump(value, recursion + 1));
+                                    result.Append(Var_dump(value, recursion + 1));
                                 }
                             }
                             catch { }
@@ -120,27 +113,25 @@ namespace Rocket.Core.Logging
 
         public static void LogWarning(string message)
         {
-            if (message == null) return;
+            if (message == null)
+                return;
+
             ProcessInternalLog(ELogType.Warning, message);
         }
 
         public static void LogError(string message)
         {
-            if (message == null) return;
+            if (message == null)
+                return;
+
             ProcessInternalLog(ELogType.Error, message);
         }
 
-        internal static void LogError(Exception ex, string v)
-        {
-            LogException(ex,v);
-        }
+        internal static void LogError(Exception ex, string v) => LogException(ex, v);
 
-        public static void Log(Exception ex)
-        {
-            LogException(ex);
-        }
+        public static void Log(Exception ex) => LogException(ex);
 
-        public static void LogException(Exception ex,string message = null)
+        public static void LogException(Exception ex, string message = null)
         {
             string source = "";
             string assembly = "";
@@ -159,37 +150,30 @@ namespace Rocket.Core.Logging
                 }
                 lastAssembly = assembly;
 
-                if (assembly != "") assembly += " >> ";
+                if (assembly != "")
+                    assembly += " >> ";
             }
             catch (Exception)
             {
                 LogError("Caught exception while logging an exception! Ouch...");
             }
 
-            ProcessInternalLog(ELogType.Exception, assembly + (message != null ? message +" -> ": "") + "Exception in " + source + ": " + ex);
+            ProcessInternalLog(ELogType.Exception, assembly + (message != null ? message + " -> " : "") + "Exception in " + source + ": " + ex);
         }
 
-        private static void ProcessInternalLog(ELogType type, string message, ConsoleColor color = ConsoleColor.White)
+        private static void ProcessInternalLog(ELogType type, string message)
         {
             if (type == ELogType.Error || type == ELogType.Exception)
-            {
                 SDG.Unturned.CommandWindow.LogError(message);
-            }
             else if (type == ELogType.Warning)
-            {
                 SDG.Unturned.CommandWindow.LogWarning(message);
-            }
             else
-            {
                 SDG.Unturned.CommandWindow.Log(message);
-            }
             ProcessLog(type, message);
         }
-        
-        private static void ProcessLog(ELogType type, string message,bool rcon = true)
-        {
+
+        private static void ProcessLog(ELogType type, string message, bool rcon = true) => 
             AsyncLoggerQueue.Current.Enqueue(new LogEntry() { Severity = type, Message = message, RCON = rcon });
-        }
 
 
         [EditorBrowsable(EditorBrowsableState.Never)]

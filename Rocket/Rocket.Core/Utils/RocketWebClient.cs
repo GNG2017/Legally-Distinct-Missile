@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Rocket.Core.Utils
 {
-    public class RocketWebClient : System.Net.WebClient
+    public class RocketWebClient : WebClient
     {
         public int Timeout { get; set; }
 
@@ -12,18 +12,13 @@ namespace Rocket.Core.Utils
         {
         }
 
-        public RocketWebClient(int timeout)
-        {
-            this.Timeout = timeout;
-        }
+        public RocketWebClient(int timeout) => Timeout = timeout;
 
         protected override WebRequest GetWebRequest(Uri address)
         {
-            var request = base.GetWebRequest(address);
+            WebRequest request = base.GetWebRequest(address);
             if (request != null)
-            {
-                request.Timeout = this.Timeout;
-            }
+                request.Timeout = Timeout;
             return request;
         }
     }

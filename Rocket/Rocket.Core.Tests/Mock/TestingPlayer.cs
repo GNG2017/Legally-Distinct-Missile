@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rocket.API;
+﻿using Rocket.API;
 
 namespace Rocket.Core.Tests
 {
     public class TestingPlayer : IRocketPlayer
     {
-        public string DisplayName
-        {
-            get
-            {
-                return "TestingPlayer";
-            }
-        }
-        public TestingPlayer(string id= "1", bool admin= false)
+        public string DisplayName => "TestingPlayer";
+        public TestingPlayer(string id = "1", bool admin = false)
         {
             IsAdmin = admin;
             Id = id;
@@ -25,26 +14,17 @@ namespace Rocket.Core.Tests
         private bool isAdmin;
         public bool IsAdmin
         {
-            get
-            {
-                return isAdmin;
-            }
-            set { isAdmin = value; }
+            get => isAdmin;
+            set => isAdmin = value;
         }
 
         private string id;
 
         public string Id
         {
-            get
-            {
-                return id;
-            }
+            get => id;
 
-            set
-            {
-                id = value;
-            }
+            set => id = value;
         }
 
         public int CompareTo(object obj)

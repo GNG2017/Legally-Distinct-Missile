@@ -74,6 +74,7 @@
     <Compile Include="Debugger.cs" />
     <Compile Include="Extensions\IRocketPlayerExtension.cs" />
     <Compile Include="Extensions\MonoBehaviourExtension.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Logging\ELogType.cs" />
     <Compile Include="Commands\RocketCommandCooldown.cs" />
     <Compile Include="Permissions\RocketPermissionsHelper.cs" />

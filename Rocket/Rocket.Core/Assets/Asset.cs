@@ -1,5 +1,4 @@
 ﻿using Rocket.API;
-using System;
 
 namespace Rocket.Core.Assets
 {
@@ -11,7 +10,9 @@ namespace Rocket.Core.Assets
         {
             get
             {
-                if (instance == null) Load();
+                if (instance == null)
+                    Load();
+
                 return instance;
             }
             set
@@ -24,19 +25,10 @@ namespace Rocket.Core.Assets
             }
         }
 
-        public virtual T Save()
-        {
-            return instance;
-        }
+        public virtual T Save() => instance;
 
-        public virtual void Load(AssetLoaded<T> callback = null)
-        {
-            callback(this);
-        }
+        public virtual void Load(AssetLoaded<T> callback = null) => callback(this);
 
-        public virtual void Unload(AssetUnloaded<T> callback = null)
-        {
-            callback(this);
-        }
+        public virtual void Unload(AssetUnloaded<T> callback = null) => callback(this);
     }
 }

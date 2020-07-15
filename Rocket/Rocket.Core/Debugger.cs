@@ -1,9 +1,9 @@
 ﻿using System;
-using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using UnityEngine;
 
 #if !LINUX
 namespace Rocket.Core
@@ -18,11 +18,15 @@ namespace Rocket.Core
 
             EnumWindows(delegate (IntPtr hWnd, int lParam)
             {
-                if (hWnd == shellWindow) return true;
-                if (!IsWindowVisible(hWnd)) return true;
+                if (hWnd == shellWindow)
+                    return true;
+
+                if (!IsWindowVisible(hWnd))
+                    return true;
 
                 int length = GetWindowTextLength(hWnd);
-                if (length == 0) return true;
+                if (length == 0)
+                    return true;
 
                 StringBuilder builder = new StringBuilder(length);
                 GetWindowText(hWnd, builder, length + 1);

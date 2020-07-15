@@ -86,7 +86,7 @@ namespace Rocket.Core.Steam
                 IsVacBanned = doc["profile"]["vacBanned"]?.ParseBool(); field = "IsVacBanned";
                 TradeBanState = doc["profile"]["tradeBanState"]?.ParseString(); field = "TradeBanState";
                 IsLimitedAccount = doc["profile"]["isLimitedAccount"]?.ParseBool(); field = "IsLimitedAccount";
-                 
+
                 CustomURL = doc["profile"]["customURL"]?.ParseString(); field = "CustomURL";
                 MemberSince = doc["profile"]["memberSince"]?.ParseDateTime(new CultureInfo("en-US", false)); field = "MemberSince";
                 HoursPlayedLastTwoWeeks = doc["profile"]["hoursPlayed2Wk"]?.ParseDouble(); field = "HoursPlayedLastTwoWeeks";
@@ -100,15 +100,18 @@ namespace Rocket.Core.Steam
                     MostPlayedGames = new List<MostPlayedGame>(); field = "MostPlayedGames";
                     foreach (XmlElement mostPlayedGame in doc["profile"]["mostPlayedGames"].ChildNodes)
                     {
-                        MostPlayedGame newMostPlayedGame = new MostPlayedGame();
-                        newMostPlayedGame.Name = mostPlayedGame["gameName"]?.ParseString(); field = "MostPlayedGame.Name";
+                        MostPlayedGame newMostPlayedGame = new MostPlayedGame
+                        {
+                            Name = mostPlayedGame["gameName"]?.ParseString()
+                        };
+                        field = "MostPlayedGame.Name";
                         newMostPlayedGame.Link = mostPlayedGame["gameLink"]?.ParseUri(); field = "MostPlayedGame.Link";
                         newMostPlayedGame.Icon = mostPlayedGame["gameIcon"]?.ParseUri(); field = "MostPlayedGame.Icon";
                         newMostPlayedGame.Logo = mostPlayedGame["gameLogo"]?.ParseUri(); field = "MostPlayedGame.Logo";
                         newMostPlayedGame.LogoSmall = mostPlayedGame["gameLogoSmall"]?.ParseUri(); field = "MostPlayedGame.LogoSmall";
                         newMostPlayedGame.HoursPlayed = mostPlayedGame["hoursPlayed"]?.ParseDouble(); field = "MostPlayedGame.HoursPlayed";
                         newMostPlayedGame.HoursOnRecord = mostPlayedGame["hoursOnRecord"]?.ParseDouble(); field = "MostPlayedGame.HoursOnRecord";
-                        MostPlayedGames.Add(newMostPlayedGame); 
+                        MostPlayedGames.Add(newMostPlayedGame);
                     }
                 }
 
@@ -117,8 +120,11 @@ namespace Rocket.Core.Steam
                     Groups = new List<Group>(); field = "Groups";
                     foreach (XmlElement group in doc["profile"]["groups"].ChildNodes)
                     {
-                        Group newGroup = new Group();
-                        newGroup.IsPrimary = group.Attributes["isPrimary"] != null && group.Attributes["isPrimary"].InnerText == "1"; field = "Group.IsPrimary";
+                        Group newGroup = new Group
+                        {
+                            IsPrimary = group.Attributes["isPrimary"] != null && group.Attributes["isPrimary"].InnerText == "1"
+                        };
+                        field = "Group.IsPrimary";
                         newGroup.SteamID64 = group["groupID64"]?.ParseUInt64(); field = "Group.SteamID64";
                         newGroup.Name = group["groupName"]?.ParseString(); field = "Group.Name";
                         newGroup.URL = group["groupURL"]?.ParseString(); field = "Group.URL";
@@ -143,10 +149,7 @@ namespace Rocket.Core.Steam
     }
     public static class XmlElementExtensions
     {
-        public static string ParseString(this XmlElement element)
-        {
-            return element.InnerText;
-        }
+        public static string ParseString(this XmlElement element) => element.InnerText;
 
 
         public static DateTime? ParseDateTime(this XmlElement element, CultureInfo cultureInfo)

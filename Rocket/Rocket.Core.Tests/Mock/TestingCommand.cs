@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Rocket.API;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rocket.API;
 
 namespace Rocket.Core.Tests
 {
@@ -20,88 +17,52 @@ namespace Rocket.Core.Tests
 
         private string help = "Test Help";
 
-        private string name ="test";
+        private string name = "test";
 
-        private List<string> permissions = new List<string>(){"test"};
+        private List<string> permissions = new List<string>() { "test" };
 
         private string syntax = "";
 
         public List<string> Aliases
         {
-            get
-            {
-                return aliases;
-            }
+            get => aliases;
 
-            set
-            {
-                aliases = value;
-            }
+            set => aliases = value;
         }
 
         public AllowedCaller AllowedCaller
         {
-            get
-            {
-                return allowedCaller;
-            }
+            get => allowedCaller;
 
-            set
-            {
-                allowedCaller = value;
-            }
+            set => allowedCaller = value;
         }
 
         public string Help
         {
-            get
-            {
-                return help;
-            }
+            get => help;
 
-            set
-            {
-                help = value;
-            }
+            set => help = value;
         }
 
         public string Name
         {
-            get
-            {
-                return name;
-            }
+            get => name;
 
-            set
-            {
-                name = value;
-            }
+            set => name = value;
         }
 
         public List<string> Permissions
         {
-            get
-            {
-                return permissions;
-            }
+            get => permissions;
 
-            set
-            {
-                permissions = value;
-            }
+            set => permissions = value;
         }
 
         public string Syntax
         {
-            get
-            {
-                return syntax;
-            }
+            get => syntax;
 
-            set
-            {
-                syntax = value;
-            }
+            set => syntax = value;
         }
 
         public void Execute(IRocketPlayer caller, string[] command)

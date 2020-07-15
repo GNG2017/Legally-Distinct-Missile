@@ -1,37 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Rocket.API
+﻿namespace Rocket.API
 {
     public class ConsolePlayer : IRocketPlayer
     {
-        public string Id
-        {
-            get
-            {
-                return "Console";
-            }
-        }
+        public string Id => "Console";
 
-        public string DisplayName
-        {
-            get
-            {
-                return "Console";
-            }
-        }
+        public string DisplayName => "Console";
 
-        public bool IsAdmin
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public bool IsAdmin => true;
 
-        public int CompareTo(object obj)
-        {
-            return Id.CompareTo(obj);
-        }
+        public int CompareTo(object obj) => Id.CompareTo(obj);
     }
 }

@@ -4,14 +4,12 @@ using System.Linq;
 
 namespace Rocket.API
 {
-    public enum RocketPermissionsProviderResult { Success, UnspecifiedError, DuplicateEntry, GroupNotFound,PlayerNotFound };
+    public enum RocketPermissionsProviderResult { Success, UnspecifiedError, DuplicateEntry, GroupNotFound, PlayerNotFound };
 
     public static class IRocketPermissionsProviderExtensions
     {
-        public static bool HasPermission(this IRocketPermissionsProvider rocketPermissionProvider,IRocketPlayer player, string permission)
-        {
-            return rocketPermissionProvider.HasPermission(player, new List<string>() { permission });
-        }
+        public static bool HasPermission(this IRocketPermissionsProvider rocketPermissionProvider, IRocketPlayer player, string permission) => 
+            rocketPermissionProvider.HasPermission(player, new List<string>() { permission });
 
         public static bool HasPermission(this IRocketPermissionsProvider rocketPermissionProvider, IRocketPlayer player, IRocketCommand command)
         {
@@ -22,10 +20,8 @@ namespace Rocket.API
             return rocketPermissionProvider.HasPermission(player, commandPermissions);
         }
 
-        public static List<Permission> GetPermissions(this IRocketPermissionsProvider rocketPermissionProvider, IRocketPlayer player, string permission)
-        {
-            return rocketPermissionProvider.GetPermissions(player, new List<string>() { permission });
-        }
+        public static List<Permission> GetPermissions(this IRocketPermissionsProvider rocketPermissionProvider, IRocketPlayer player, string permission) => 
+            rocketPermissionProvider.GetPermissions(player, new List<string>() { permission });
 
         public static List<Permission> GetPermissions(this IRocketPermissionsProvider rocketPermissionProvider, IRocketPlayer player, IRocketCommand command)
         {

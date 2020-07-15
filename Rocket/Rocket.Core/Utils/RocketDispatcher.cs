@@ -1,5 +1,4 @@
-﻿using Rocket.Core.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,8 +11,8 @@ namespace Rocket.Core.Utils
         private static int numThreads;
         private static bool awake = false;
 
-        private static List<Action> actions = new List<Action>();
-        private static List<DelayedQueueItem> delayed = new List<DelayedQueueItem>();
+        private static readonly List<Action> actions = new List<Action>();
+        private static readonly List<DelayedQueueItem> delayed = new List<DelayedQueueItem>();
 
         public struct DelayedQueueItem
         {
@@ -21,35 +20,26 @@ namespace Rocket.Core.Utils
             public Action action;
         }
 
-        public static void QueueOnMainThread(Action action)
-        {
-            QueueOnMainThread(action, 0f);
-        }
+        public static void QueueOnMainThread(Action action) => QueueOnMainThread(action, 0f);
 
         public static void QueueOnMainThread(Action action, float time)
         {
             if (time != 0)
             {
                 lock (delayed)
-                {
                     delayed.Add(new DelayedQueueItem { time = Time.time + time, action = action });
-                }
             }
             else
             {
                 lock (actions)
-                {
                     actions.Add(action);
-                }
             }
         }
 
         public static Thread RunAsync(Action a)
         {
             while (numThreads >= 8)
-            {
                 Thread.Sleep(1);
-            }
             Interlocked.Increment(ref numThreads);
             ThreadPool.QueueUserWorkItem(RunAction, a);
             return null;
@@ -61,9 +51,9 @@ namespace Rocket.Core.Utils
             {
                 ((Action)action)();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Logging.Logger.LogException(ex,"Error while running action");
+                Logging.Logger.LogException(ex, "Error while running action");
             }
             finally
             {
@@ -71,14 +61,12 @@ namespace Rocket.Core.Utils
             }
         }
 
-        private void Awake()
-        {
-            awake = true;
-        }
+        private void Awake() => awake = true;
 
         private void FixedUpdate()
         {
-            if (!awake) return;
+            if (!awake)
+                return;
 
             List<Action> currentActions = new List<Action>();
             lock (actions)
@@ -86,23 +74,18 @@ namespace Rocket.Core.Utils
                 currentActions.AddRange(actions);
                 actions.Clear();
             }
-            foreach (var a in currentActions)
-            {
+            foreach (Action a in currentActions)
                 a();
-            }
 
             List<DelayedQueueItem> currentDelayed = new List<DelayedQueueItem>();
             lock (delayed)
             {
                 currentDelayed.AddRange(delayed.Where(d => d.time <= Time.time));
-                foreach (var item in currentDelayed)
+                foreach (DelayedQueueItem item in currentDelayed)
                     delayed.Remove(item);
             }
             foreach (DelayedQueueItem item in currentDelayed)
-            {
                 item.action();
-            }
-
         }
     }
 }

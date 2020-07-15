@@ -1,17 +1,12 @@
-﻿using Rocket.Core.Assets;
-using System.Xml.Serialization;
-using System;
-using Rocket.API;
+﻿using Rocket.API;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Rocket.Core.Serialization
 {
     public sealed class RocketCommands : IDefaultable
     {
-        public void LoadDefaults()
-        {
-            CommandMappings = new List<CommandMapping>();
-        }
+        public void LoadDefaults() => CommandMappings = new List<CommandMapping>();
 
         [XmlArray("Commands")]
         [XmlArrayItem("Command")]

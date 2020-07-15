@@ -1,22 +1,19 @@
-﻿using Rocket.Core.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Rocket.Core.Utils
 {
     public static class RocketHelper
     {
-        public static bool IsUri(string uri) {
-            if (String.IsNullOrEmpty(uri)) return false;
-            Uri uriOut = null;
-            if (Uri.TryCreate(uri, UriKind.Absolute, out uriOut) && (uriOut.Scheme == Uri.UriSchemeHttp || uriOut.Scheme == Uri.UriSchemeHttps))
-            {
+        public static bool IsUri(string uri)
+        {
+            if (string.IsNullOrEmpty(uri))
+                return false;
+
+            if (Uri.TryCreate(uri, UriKind.Absolute, out Uri uriOut) && (uriOut.Scheme == Uri.UriSchemeHttp || uriOut.Scheme == Uri.UriSchemeHttps))
                 return true;
-            }
             return false;
         }
 
@@ -65,9 +62,7 @@ namespace Rocket.Core.Utils
         {
             List<Type> allTypes = new List<Type>();
             foreach (Assembly assembly in assemblies)
-            {
                 allTypes.AddRange(GetTypesFromParentClass(assembly, parentClass));
-            }
             return allTypes;
         }
 
@@ -75,9 +70,7 @@ namespace Rocket.Core.Utils
         {
             List<Type> allTypes = new List<Type>();
             foreach (Assembly assembly in assemblies)
-            {
                 allTypes.AddRange(GetTypesFromInterface(assembly, interfaceName));
-            }
             return allTypes;
         }
 
@@ -96,9 +89,7 @@ namespace Rocket.Core.Utils
             foreach (Type type in types.Where(t => t != null))
             {
                 if (type.GetInterface(interfaceName) != null)
-                {
                     allTypes.Add(type);
-                }
             }
             return allTypes;
         }

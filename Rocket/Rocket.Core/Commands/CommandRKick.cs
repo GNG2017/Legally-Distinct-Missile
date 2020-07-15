@@ -2,44 +2,23 @@
 using Rocket.API.Extensions;
 using Rocket.Core.Logging;
 using Rocket.Core.RCON;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Rocket.Core.Commands
 {
-    class CommandRKick : IRocketCommand
+    internal class CommandRKick : IRocketCommand
     {
-        public List<string> Aliases
-        {
-            get { return new List<string>(); }
-        }
+        public List<string> Aliases => new List<string>();
 
-        public AllowedCaller AllowedCaller
-        {
-            get { return AllowedCaller.Console; }
-        }
+        public AllowedCaller AllowedCaller => AllowedCaller.Console;
 
-        public string Help
-        {
-            get { return "Kicks a client off of RCON."; }
-        }
+        public string Help => "Kicks a client off of RCON.";
 
-        public string Name
-        {
-            get { return "rkick"; }
-        }
+        public string Name => "rkick";
 
-        public List<string> Permissions
-        {
-            get { return new List<string>() { "rocket.rkick" }; }
-        }
+        public List<string> Permissions => new List<string>() { "rocket.rkick" };
 
-        public string Syntax
-        {
-            get { return "<ConnectionID>"; }
-        }
+        public string Syntax => "<ConnectionID>";
 
         public void Execute(IRocketPlayer caller, string[] command)
         {
@@ -51,7 +30,7 @@ namespace Rocket.Core.Commands
             }
             foreach (RCONConnection client in RCONServer.Clients)
             {
-                if (client.InstanceID == (int)instance)
+                if (client.InstanceID == instance)
                 {
                     Logger.Log(R.Translate("command_rkick_kicked", instance.ToString(), client.Address));
                     client.Close();

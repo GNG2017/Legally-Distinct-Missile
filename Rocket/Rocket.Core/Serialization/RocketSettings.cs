@@ -1,8 +1,5 @@
-﻿using Rocket.Core.Assets;
+﻿using Rocket.API;
 using System.Xml.Serialization;
-using System;
-using Rocket.API;
-using System.Collections.Generic;
 
 namespace Rocket.Core.Serialization
 {
@@ -48,7 +45,7 @@ namespace Rocket.Core.Serialization
     {
         [XmlAttribute]
         public bool Enabled = false;
-        [XmlAttribute]  
+        [XmlAttribute]
         public string Url = "";
     }
 
@@ -70,7 +67,7 @@ namespace Rocket.Core.Serialization
 
         }
 
-        public CommandMapping(string name,string @class, bool enabled = true, CommandPriority priority = CommandPriority.Normal)
+        public CommandMapping(string name, string @class, bool enabled = true, CommandPriority priority = CommandPriority.Normal)
         {
             Name = name;
             Enabled = enabled;
@@ -98,7 +95,7 @@ namespace Rocket.Core.Serialization
 
         [XmlElement("MaxFrames")]
         public int MaxFrames = 60;
-        
+
         public void LoadDefaults()
         {
             RCON = new RemoteConsole();

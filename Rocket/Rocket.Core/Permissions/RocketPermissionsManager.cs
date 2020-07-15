@@ -1,10 +1,8 @@
 ﻿using Rocket.API;
 using Rocket.API.Serialisation;
 using Rocket.Core.Assets;
-using Rocket.Core.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Rocket.Core.Permissions
@@ -34,7 +32,7 @@ namespace Rocket.Core.Permissions
                 Logging.Logger.LogException(ex);
             }
         }
-        
+
         private bool updateWebPermissions = false;
         private DateTime lastWebPermissionsUpdate;
 
@@ -46,7 +44,8 @@ namespace Rocket.Core.Permissions
                 {
                     lastWebPermissionsUpdate = DateTime.Now;
                     updateWebPermissions = false;
-                    helper.permissions.Load((IAsset<RocketPermissions> asset) => {
+                    helper.permissions.Load((IAsset<RocketPermissions> asset) =>
+                    {
                         updateWebPermissions = true;
                     });
                 }
@@ -58,64 +57,28 @@ namespace Rocket.Core.Permissions
             }
         }
 
-        public void Reload()
-        {
-            helper.permissions.Load();
-        }
+        public void Reload() => helper.permissions.Load();
 
-        public bool HasPermission(IRocketPlayer player, List<string> permissions)
-        {
-            return helper.HasPermission(player, permissions);
-        }
+        public bool HasPermission(IRocketPlayer player, List<string> permissions) => helper.HasPermission(player, permissions);
 
-        public List<RocketPermissionsGroup> GetGroups(IRocketPlayer player, bool includeParentGroups)
-        {
-            return helper.GetGroups(player, includeParentGroups);
-        }
+        public List<RocketPermissionsGroup> GetGroups(IRocketPlayer player, bool includeParentGroups) => helper.GetGroups(player, includeParentGroups);
 
-        public List<Permission> GetPermissions(IRocketPlayer player)
-        {
-            return helper.GetPermissions(player);
-        }
+        public List<Permission> GetPermissions(IRocketPlayer player) => helper.GetPermissions(player);
 
-        public List<Permission> GetPermissions(IRocketPlayer player,List<string> requestedPermissions)
-        {
-            return helper.GetPermissions(player, requestedPermissions);
-        }
+        public List<Permission> GetPermissions(IRocketPlayer player, List<string> requestedPermissions) => helper.GetPermissions(player, requestedPermissions);
 
-        public RocketPermissionsProviderResult AddPlayerToGroup(string groupId,IRocketPlayer player)
-        {
-            return helper.AddPlayerToGroup(groupId,player);
-        }
+        public RocketPermissionsProviderResult AddPlayerToGroup(string groupId, IRocketPlayer player) => helper.AddPlayerToGroup(groupId, player);
 
-        public RocketPermissionsProviderResult RemovePlayerFromGroup(string groupId, IRocketPlayer player)
-        {
-            return helper.RemovePlayerFromGroup(groupId, player);
-        }
+        public RocketPermissionsProviderResult RemovePlayerFromGroup(string groupId, IRocketPlayer player) => helper.RemovePlayerFromGroup(groupId, player);
 
-        public RocketPermissionsGroup GetGroup(string groupId)
-        {
-            return helper.GetGroup(groupId);
-        }
+        public RocketPermissionsGroup GetGroup(string groupId) => helper.GetGroup(groupId);
 
-        public RocketPermissionsProviderResult SaveGroup(RocketPermissionsGroup group)
-        {
-            return helper.SaveGroup(group);
-        }
+        public RocketPermissionsProviderResult SaveGroup(RocketPermissionsGroup group) => helper.SaveGroup(group);
 
-        public RocketPermissionsProviderResult AddGroup(RocketPermissionsGroup group)
-        {
-            return helper.AddGroup(group);
-        }
+        public RocketPermissionsProviderResult AddGroup(RocketPermissionsGroup group) => helper.AddGroup(group);
 
-        public RocketPermissionsProviderResult DeleteGroup(RocketPermissionsGroup group)
-        {
-            return helper.DeleteGroup(group.Id);
-        }
+        public RocketPermissionsProviderResult DeleteGroup(RocketPermissionsGroup group) => helper.DeleteGroup(group.Id);
 
-        public RocketPermissionsProviderResult DeleteGroup(string groupId)
-        {
-            return helper.DeleteGroup(groupId);
-        }
+        public RocketPermissionsProviderResult DeleteGroup(string groupId) => helper.DeleteGroup(groupId);
     }
 }

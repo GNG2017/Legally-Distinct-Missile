@@ -1,5 +1,4 @@
-﻿using Rocket.Core.Logging;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Rocket.Core.Utils
@@ -9,16 +8,14 @@ namespace Rocket.Core.Utils
         private void FixedUpdate()
         {
             if (started)
-            {
-                checkTimerRestart();
-            }
+                CheckTimerRestart();
         }
 
         private DateTime? shutdownTime = null;
         private bool shutdown = false;
         public static AutomaticShutdownWatchdog Instance;
         private bool started = false;
-        private DateTime startedTime = DateTime.Now;
+        private readonly DateTime startedTime = DateTime.Now;
 
         private void Start()
         {
@@ -26,12 +23,12 @@ namespace Rocket.Core.Utils
             if (R.Settings.Instance.AutomaticShutdown.Enabled)
             {
                 shutdownTime = startedTime.ToUniversalTime().AddSeconds(R.Settings.Instance.AutomaticShutdown.Interval);
-                Logging.Logger.Log("This server will automatically shutdown in " + R.Settings.Instance.AutomaticShutdown.Interval + " seconds (" + shutdownTime.ToString() + " UTC)");
+                Logging.Logger.Log($"This server will automatically shutdown in {R.Settings.Instance.AutomaticShutdown.Interval} seconds ({shutdownTime} UTC)");
             }
             started = true;
         }
 
-        private void checkTimerRestart()
+        private void CheckTimerRestart()
         {
             try
             {
