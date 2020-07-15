@@ -192,3 +192,4 @@ ModelManifest.xml
 # IntelliJ Rider
 .idea/
 Rocket.Unturned/GlobalSuppressions.cs
+Rocket/Rocket.Core/GlobalSuppressions.cs
